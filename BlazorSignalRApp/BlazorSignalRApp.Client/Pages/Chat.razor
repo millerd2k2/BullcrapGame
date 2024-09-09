@@ -22,7 +22,7 @@
 <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
 <button @onclick="CallBullshit" disabled="@(!IsConnected)">Call Bullshit</button>
 
-<img src=@(card.GetImage()) alt="Card"/>
+<img src=@card.GetImage(), alt=@card.GetImage()/>
 
 <hr>
 
@@ -38,7 +38,7 @@
     private List<string> messages = new List<string>();
     private string? userInput;
     private string? messageInput;
-    private Card card = new Card(1, 2);
+    Card card = new Card(1, 1);
 
     protected override async Task OnInitializedAsync()
     {

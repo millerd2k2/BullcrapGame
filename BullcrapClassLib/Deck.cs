@@ -14,7 +14,7 @@ namespace BullcrapClassLib
             MakeDeck();
         }
 
-        private List<Card> Cards { get; set; }
+        public List<Card> Cards { get; set; }
 
         public void MakeDeck()
         {
@@ -31,12 +31,13 @@ namespace BullcrapClassLib
         public void Deal(List<Player> playerList)
         {
             int extraCards = Cards.Count % playerList.Count;
+            int handCount = Cards.Count / playerList.Count;
 
             for (int i = 0; i < playerList.Count; i++)
             {
-                int handCount = Cards.Count / playerList.Count + (i < extraCards ? 1 : 0);
+                int cardsToDeal = i < extraCards ? handCount + 1 : handCount;
 
-                foreach (Card card in TakeCards(handCount))
+                foreach (Card card in TakeCards(cardsToDeal))
                 {
                     playerList[i].Hand.Add(card);
                 }
