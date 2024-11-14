@@ -56,5 +56,46 @@ namespace BullcrapClassLib
 
             return filename + ".svg";
         }
+
+        public override string ToString()
+        {
+            string cardString = "";
+            switch (Suit)
+            {
+                case 1:
+                    cardString += "♣";
+                    break;
+                case 2:
+                    cardString += "♦";
+                    break;
+                case 3:
+                    cardString += "♥";
+                    break;
+                case 4:
+                    cardString += "♠";
+                    break;
+            }
+
+            switch (Value)
+            {
+                case 1:
+                    cardString += "A";
+                    break;
+                case 11:
+                    cardString += "J";
+                    break;
+                case 12:
+                    cardString += "Q";
+                    break;
+                case 13:
+                    cardString += "K";
+                    break;
+                default:
+                    cardString += Value;
+                    break;
+            }
+
+            return cardString;
+        }
     }
 }

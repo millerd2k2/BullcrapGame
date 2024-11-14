@@ -6,23 +6,41 @@
 
 <h3>CardHandTest</h3>
 
+@if (State.WinnerDeclared)
+{
+    <p>@winner wins!</p>
+    <button @onclick="ClickReset">Reset Game</button>
+}
 <p>Current Player: @players[playerNum].Name</p>
+<p>Current Rank: @currentRank</p>
 
 <button @onclick="ClickPrevious">Previous</button>
 <button @onclick="ClickNext">Next</button>
+<button @onclick="CallBullshit" disabled="@(State.CardPile.IsEmpty())">Call Bullshit</button>
 
 <br />
 
-@foreach (var card in players[playerNum].Hand)
-{
-    <img src="@card.GetImage()" alt="card" />
-}
+<nav>
+    @foreach (var card in players[playerNum].Hand)
+    {
+        <img src="@card.GetImage()" alt="card" class="@GetBorderType(card)" @onclick="() => HighlightCard(card)" />
+    }
+</nav>
 
+<br />
+
+<button @onclick="SubmitCards" disabled="@(selectedCards.Count == 0)">Submit</button>
 
 @code {
-    Deck deck = new Deck();
+    GameState State;
     List<Player> players = new();
-    int playerNum = 0;
+    List<Card> selectedCards = new();
+    //CenterPile centerPile = new();
+    const int MAXCARDS = 4;
+    const int MAXRANK = 13;
+    string winner { get { return State.Winner; } }
+    int playerNum { get { return State.CurrentPlayer; } set { State.CurrentPlayer = value; } }
+    int currentRank { get { return State.CurrentRank; } set { State.CurrentRank = value; } }
 
     protected override void OnInitialized()
     {
@@ -31,21 +49,70 @@
             players.Add(new Player("Player" + i));
         }
 
-        //deck.Shuffle();
-        deck.Deal(players);
+        State = new(players);
     }
 
     private void ClickPrevious()
     {
-        playerNum--;
-        if (playerNum < 0) playerNum = players.Count - 1;
-        //StateHasChanged();
+        playerNum = PreviousPlayer();
     }
 
     private void ClickNext()
     {
-        playerNum++;
-        if (playerNum == players.Count) playerNum = 0;
-        //StateHasChanged();
+        playerNum = NextPlayer();
+    }
+
+    private int PreviousPlayer()
+    {
+        return (playerNum - 1 + players.Count) % players.Count;
+    }
+
+    private int NextPlayer()
+    {
+        return (playerNum + 1) % players.Count;
+    }
+
+    private int PreviousRank()
+    {
+        return ((currentRank - 2 + MAXRANK) % MAXRANK) + 1;
+    }
+
+    private int NextRank()
+    {
+        return (currentRank % MAXRANK) + 1;
+    }
+
+    private void ClickReset()
+    {
+        State.Reset();
+    }
+
+    private void CallBullshit()
+    {
+        State.Bullshit(playerNum);
+    }
+
+    private void HighlightCard(Card card)
+    {
+        if (selectedCards.Count() < MAXCARDS && !selectedCards.Contains(card))
+        {
+            selectedCards.Add(card);
+        }
+        else
+        {
+            selectedCards.Remove(card);
+        }
+    }
+
+    private string GetBorderType(Card card)
+    {
+        return selectedCards.Contains(card) ? "border-on" : String.Empty;
+    }
+
+    private void SubmitCards()
+    {
+        State.PlayTurn(selectedCards);
+        selectedCards.Clear();
+        StateHasChanged();
     }
 }

@@ -31,13 +31,14 @@ namespace BullcrapClassLib
         public void Deal(List<Player> playerList)
         {
             int extraCards = Cards.Count % playerList.Count;
-            int handCount = Cards.Count / playerList.Count;
+            int handCount = Cards.Count / playerList.Count + 1;
 
             for (int i = 0; i < playerList.Count; i++)
             {
-                int cardsToDeal = i < extraCards ? handCount + 1 : handCount;
+                if (i == extraCards) handCount--;
+                //int cardsToDeal = i < extraCards ? handCount + 1 : handCount;
 
-                foreach (Card card in TakeCards(cardsToDeal))
+                foreach (Card card in TakeCards(handCount))
                 {
                     playerList[i].Hand.Add(card);
                 }

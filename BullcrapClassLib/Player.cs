@@ -18,5 +18,10 @@ namespace BullcrapClassLib
             Hand = new List<Card>();
             IsHost = isHost;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
